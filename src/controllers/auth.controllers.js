@@ -322,7 +322,7 @@ router.get("/pause", async (req, res) => {
   }
 });
 
-router.put("/play", async (req, res) => {
+router.get("/play", async (req, res) => {
   const access_token = cachedAccessToken;
   const { track_uri } = req.body;
 
