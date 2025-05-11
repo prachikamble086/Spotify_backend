@@ -24,8 +24,10 @@ router.get("/login", function (req, res) {
   // res.cookie(stateKey, state);
   res.cookie(stateKey, state, {
     httpOnly: true,
-    domain: "127.0.0.1",
+    // domain: "127.0.0.1",
     path: "/",
+    sameSite: "lax",
+    secure: true,
   });
   console.log("state:", state, stateKey);
 
