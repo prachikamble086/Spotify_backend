@@ -366,9 +366,9 @@ router.get("/pause", async (req, res) => {
 //   }
 // });
 
-router.put("/play", async (req, res) => {
+router.get("/play", async (req, res) => {
   const access_token = cachedAccessToken;
-  const { track_uri } = req.body;
+  const track_uri = req.query.track_uri;
 
   if (!access_token) {
     return res.status(401).json({
