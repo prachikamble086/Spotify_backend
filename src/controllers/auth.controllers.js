@@ -322,7 +322,51 @@ router.get("/pause", async (req, res) => {
   }
 });
 
-router.get("/play", async (req, res) => {
+// router.put("/play", async (req, res) => {
+//   const access_token = cachedAccessToken;
+//   const { track_uri } = req.body;
+
+//   if (!access_token) {
+//     return res.status(401).json({
+//       error: "No token provided",
+//       message: "You must log in to start playback.",
+//     });
+//   }
+
+//   if (!track_uri) {
+//     return res.status(400).json({
+//       error: "Missing track_uri",
+//       message: "You must provide a Spotify track URI in the request body.",
+//     });
+//   }
+
+//   try {
+//     await axios.put(
+//       "https://api.spotify.com/v1/me/player/play",
+//       {
+//         uris: [track_uri],
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${access_token}`,
+//         },
+//       }
+//     );
+
+//     res.json({
+//       success: true,
+//       message: `Playback started for track: ${track_uri}`,
+//     });
+//   } catch (error) {
+//     console.error("Error starting playback:", error.message);
+//     res.status(500).json({
+//       error: "Spotify Premium required",
+//       message: "Playback control features need a Spotify Premium account.",
+//     });
+//   }
+// });
+
+router.put("/play", async (req, res) => {
   const access_token = cachedAccessToken;
   const { track_uri } = req.body;
 
@@ -359,9 +403,19 @@ router.get("/play", async (req, res) => {
     });
   } catch (error) {
     console.error("Error starting playback:", error.message);
+
+    // Catch the 403 error like we do in /pause
+    if (error.response && error.response.status === 403) {
+      return res.status(403).json({
+        error: "Spotify Premium required",
+        message: "Playback control features need a Spotify Premium account.",
+      });
+    }
+
+    // If the error is something else, respond with a generic error
     res.status(500).json({
-      error: "Spotify Premium required",
-      message: "Playback control features need a Spotify Premium account.",
+      error: "Failed to start playback",
+      message: error.response ? error.response.data : error.message,
     });
   }
 });
